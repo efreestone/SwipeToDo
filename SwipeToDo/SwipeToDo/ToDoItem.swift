@@ -10,13 +10,13 @@ import UIKit
 
 class ToDoItem: NSObject {
     //Create initial vars
-    var text: String
-    var completed: Bool
+    var textDescription: String
+    var isCompleted: Bool
     
     //Initialize ToDoItem and set default values
-    init(text: String) {
-        self.text = text
-        self.completed = false
+    init(textDesc: String) {
+        self.textDescription = textDesc
+        self.isCompleted = false
         
     }
 
