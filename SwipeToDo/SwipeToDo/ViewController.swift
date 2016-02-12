@@ -24,6 +24,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         //Set tableview style
         tableView.separatorStyle = .None
+        tableView.backgroundColor = UIColor.blackColor()
         tableView.rowHeight = 50.0
         
         //Check if toDoItem exists, return if it does
@@ -60,6 +61,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(tableView: UITableView,
         cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+            cell.selectionStyle = .None
             //Set background to clear
             cell.textLabel?.backgroundColor = UIColor.clearColor()
             let item = toDoItems[indexPath.row]
