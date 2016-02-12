@@ -20,7 +20,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //Set tableview data source and delegate
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(TableViewCell.self, forCellReuseIdentifier: "cell")
         
         //Set tableview style
         tableView.separatorStyle = .None
@@ -60,6 +60,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(tableView: UITableView,
         cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+            //Set background to clear
+            cell.textLabel?.backgroundColor = UIColor.clearColor()
             let item = toDoItems[indexPath.row]
             cell.textLabel?.text = item.textDescription
             return cell
