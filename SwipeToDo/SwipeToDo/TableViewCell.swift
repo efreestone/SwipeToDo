@@ -44,21 +44,21 @@ class TableViewCell: UITableViewCell {
     
     // MARK: - Horizontal pan gesture
     func handlePan(recognizer: UIPanGestureRecognizer) {
-        //1
+        //Gesture began
         if recognizer.state == .Began {
-            //Gesture began, record center
+            //Record center
             originalCenter = center
         }
         
-        //2
+        //Gesture continues
         if recognizer.state == .Changed {
             let translation = recognizer.translationInView(self)
             center = CGPointMake(originalCenter.x + translation.x, originalCenter.y)
             //Check if drag length far enough to delete
-            deleteOnDragRelease = frame.origin.x < -frame.size.width / 2.0
+            deleteOnDragRelease = frame.origin.x < -frame.size.width / 1.5
         }
         
-        //3
+        //Gesture has ended
         if recognizer.state == .Ended {
             //Get original frame
             let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
@@ -70,6 +70,17 @@ class TableViewCell: UITableViewCell {
                 print("Delete on release = true")
             }
         }
+    }
+    
+    override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            let translation = panGestureRecognizer.translationInView(superview!)
+            if fabs(translation.x) > fabs(translation.y) {
+                return true
+            }
+            return false
+        }
+        return false
     }
 
 }

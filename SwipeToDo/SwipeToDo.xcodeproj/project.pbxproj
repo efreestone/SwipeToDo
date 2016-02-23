@@ -50,6 +50,8 @@
 		B802D71D1C5DADB9005F4A92 /* SwipeToDoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToDoUITests.swift; sourceTree = "<group>"; };
 		B802D71F1C5DADB9005F4A92 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B83280BE1C6D8F1B0045EB1E /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		B8C89F5C1C716D0700C992A0 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		B8C89F5E1C716D1400C992A0 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		B8E1A3D11C61C00900FE23FF /* ToDoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -81,6 +83,7 @@
 		B802D6F11C5DADB9005F4A92 = {
 			isa = PBXGroup;
 			children = (
+				B8C89F601C716D6400C992A0 /* Frameworks */,
 				B802D6FC1C5DADB9005F4A92 /* SwipeToDo */,
 				B802D7111C5DADB9005F4A92 /* SwipeToDoTests */,
 				B802D71C1C5DADB9005F4A92 /* SwipeToDoUITests */,
@@ -129,6 +132,15 @@
 				B802D71F1C5DADB9005F4A92 /* Info.plist */,
 			);
 			path = SwipeToDoUITests;
+			sourceTree = "<group>";
+		};
+		B8C89F601C716D6400C992A0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B8C89F5E1C716D1400C992A0 /* AdSupport.framework */,
+				B8C89F5C1C716D0700C992A0 /* iAd.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,6 +211,7 @@
 				TargetAttributes = {
 					B802D6F91C5DADB9005F4A92 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 58QEPHRML8;
 					};
 					B802D70D1C5DADB9005F4A92 = {
 						CreatedOnToolsVersion = 7.2;
@@ -407,6 +420,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = SwipeToDo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.elijahfreestone.SwipeToDo;
@@ -418,6 +432,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = SwipeToDo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.elijahfreestone.SwipeToDo;
