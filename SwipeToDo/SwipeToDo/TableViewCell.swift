@@ -32,7 +32,7 @@ class TableViewCell: UITableViewCell {
         layer.insertSublayer(gradientLayer, atIndex: 0)
         
         //Add pan gesture to cell
-        var recognizer = UIPanGestureRecognizer(target: self, action: "handlePan:")
+        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(TableViewCell.handlePan(_:)))
         recognizer.delegate = self
         addGestureRecognizer(recognizer)
     }
@@ -55,7 +55,7 @@ class TableViewCell: UITableViewCell {
             let translation = recognizer.translationInView(self)
             center = CGPointMake(originalCenter.x + translation.x, originalCenter.y)
             //Check if drag length far enough to delete
-            deleteOnDragRelease = frame.origin.x < -frame.size.width / 1.5
+            deleteOnDragRelease = frame.origin.x < -frame.size.width / 2.0
         }
         
         //Gesture has ended
@@ -66,6 +66,7 @@ class TableViewCell: UITableViewCell {
             if !deleteOnDragRelease {
                 //Item not being deleted, snap cell back into original location
                 UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
+                print("Delete on release = false")
             } else {
                 print("Delete on release = true")
             }
