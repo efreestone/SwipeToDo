@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate {
     @IBOutlet weak var tableView: UITableView!
     
     var toDoItems = [ToDoItem]()
@@ -59,16 +59,35 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(tableView: UITableView,
         cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+            let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
             cell.selectionStyle = .None
             //Set background to clear
             cell.textLabel?.backgroundColor = UIColor.clearColor()
             let item = toDoItems[indexPath.row]
             cell.textLabel?.text = item.textDescription
+        
+            cell.delegate = self
+            cell.toDoItem = item
             return cell
     }
     
     // MARK: - Tableview delegate
+    
+    func toDoItemDeleted(toDoItem: ToDoItem) {
+        let index = (toDoItems as NSArray).indexOfObject(toDoItem)
+        if index == NSNotFound {
+            return
+        }
+        
+        //Remove item
+        toDoItems.removeAtIndex(index)
+        
+        //Use tableview animation to remove item
+        tableView.beginUpdates()
+        let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
+        tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
+        tableView.endUpdates()
+    }
     
     func colorForIndex(index: Int) -> UIColor {
         let itemCount = toDoItems.count - 1

@@ -20,6 +20,10 @@ class TableViewCell: UITableViewCell {
     var originalCenter = CGPoint()
     var deleteOnDragRelease = false
     
+    //Create cell delegate and todo item as optionals. Will be set in ViewController
+    var delegate: TableViewCellDelegate?
+    var toDoItem: ToDoItem?
+    
     required init(coder aDecoder: NSCoder) {
         fatalError("NSCoding not supported")
     }
@@ -74,6 +78,11 @@ class TableViewCell: UITableViewCell {
                 UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
                 print("Delete on release = false")
             } else {
+                //Insure delegate and toDoItem both exist
+                if delegate != nil && toDoItem != nil {
+                    //Notify delegate to delete item
+                    delegate!.toDoItemDeleted(toDoItem!)
+                }
                 print("Delete on release = true")
             }
         }
