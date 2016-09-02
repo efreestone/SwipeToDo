@@ -8,6 +8,12 @@
 
 import UIKit
 
+//Protocol TableViewCell uses to inform delegates of state change
+protocol TableViewCellDelegate {
+    //Item has been deleted
+    func toDoItemDeleted(todoItem: ToDoItem)
+}
+
 class TableViewCell: UITableViewCell {
 
     let gradientLayer = CAGradientLayer()
@@ -73,6 +79,8 @@ class TableViewCell: UITableViewCell {
         }
     }
     
+    
+    //Cancel gesture if verticle (scrolling)
     override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translationInView(superview!)

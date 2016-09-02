@@ -45,7 +45,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         toDoItems.append(ToDoItem(textDesc: "get more exercise"))
         toDoItems.append(ToDoItem(textDesc: "catch up with Mom"))
         toDoItems.append(ToDoItem(textDesc: "get a hair cut"))
-        
     }
     
     // MARK: - Tableview data source
