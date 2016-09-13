@@ -13,6 +13,7 @@ import QuartzCore
 class StrikeThroughText: UILabel {
     let strikeThroughLayer: CALayer
     
+    //Hide or show strikethrough layer
     var strikeThrough : Bool {
         didSet {
             strikeThroughLayer.hidden = !strikeThrough
@@ -34,6 +35,7 @@ class StrikeThroughText: UILabel {
         strikeThrough = false
         
         super.init(frame: frame)
+        //Add striketrough layer
         layer.addSublayer(strikeThroughLayer)
     }
     
