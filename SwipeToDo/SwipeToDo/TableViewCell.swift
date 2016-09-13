@@ -19,7 +19,9 @@ class TableViewCell: UITableViewCell {
     let gradientLayer = CAGradientLayer()
     var originalCenter = CGPoint()
     var deleteOnDragRelease = false
+    var crossLabel: UILabel
     var completeOnDragRelease = false
+    var tickLabel: UILabel
     
     //Create strikethrough layer to mark items complete
     let label: StrikeThroughText
@@ -46,10 +48,29 @@ class TableViewCell: UITableViewCell {
         label.font = UIFont.boldSystemFontOfSize(16)
         label.backgroundColor = UIColor.clearColor()
         
+        //Utility method for creating contextual cues
+        func createCueLabel() -> UILabel {
+            let label = UILabel(frame: CGRect.null)
+            label.textColor = UIColor.whiteColor()
+            label.font = UIFont.boldSystemFontOfSize(32.0)
+            label.backgroundColor = UIColor.clearColor()
+            return label
+        }
+        
+        //Cross and tick labels for contextual cues, using unicode symbols
+        crossLabel = createCueLabel()
+        crossLabel.text = "\u{2717}"
+        crossLabel.textAlignment = .Left
+        tickLabel = createCueLabel()
+        tickLabel.text = "\u{2713}"
+        tickLabel.textAlignment = .Right
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        //Add strikethrough layer without default blue highlight
+        //Add strikethrough and cue layers without default blue highlight
         addSubview(label)
+        addSubview(crossLabel)
+        addSubview(tickLabel)
         selectionStyle = .None
         
         //Add gradient layer for each cell
@@ -74,13 +95,20 @@ class TableViewCell: UITableViewCell {
         addGestureRecognizer(recognizer)
     }
     
+    //Define lets for margins and context cues
     let kLabelLeftMargin: CGFloat = 15.0
+    let kUICuesMargin: CGFloat = 10.0
+    let kUICuesWidth: CGFloat = 50.0
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         //Set layers to fill full bounds
         gradientLayer.frame = bounds
         itemCompleteLayer.frame = bounds
         label.frame = CGRect(x: kLabelLeftMargin, y: 0, width: bounds.size.width - kLabelLeftMargin, height: bounds.size.height)
+        //Set cues off screen, cross to to the right and tick to the left
+        crossLabel.frame = CGRect(x: bounds.size.width + kUICuesMargin, y: 0, width: kUICuesWidth, height: bounds.size.height)
+        tickLabel.frame = CGRect(x: -kUICuesWidth - kUICuesMargin, y: 0, width: kUICuesWidth, height: bounds.size.height)
     }
     
     // MARK: - Horizontal pan gesture
@@ -99,6 +127,15 @@ class TableViewCell: UITableViewCell {
             deleteOnDragRelease = frame.origin.x < -frame.size.width / 2.0
             //Or far enough right to complete
             completeOnDragRelease = frame.origin.x > frame.size.width / 2.0
+            
+            //Fade in contextual cues
+            let cueAlpha = fabs(frame.origin.x) / (frame.size.width / 2.0)
+            crossLabel.alpha = cueAlpha
+            tickLabel.alpha = cueAlpha
+            //Change cue colors to indicate cell has been pulled far enough
+            crossLabel.textColor = deleteOnDragRelease ? UIColor.redColor() : UIColor.whiteColor()
+            tickLabel.textColor = completeOnDragRelease ? UIColor.greenColor() : UIColor.whiteColor()
+            
         }
         
         //Gesture has ended
