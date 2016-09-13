@@ -57,14 +57,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         return toDoItems.count
     }
     
+    //Cell for row at index path
     func tableView(tableView: UITableView,
         cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
             cell.selectionStyle = .None
             //Set background to clear
-            cell.textLabel?.backgroundColor = UIColor.clearColor()
+            //cell.textLabel?.backgroundColor = UIColor.clearColor()
             let item = toDoItems[indexPath.row]
-            cell.textLabel?.text = item.textDescription
+            //Cell text is set in didSet on TableViewCell
+            //cell.textLabel?.text = item.textDescription
         
             cell.delegate = self
             cell.toDoItem = item
