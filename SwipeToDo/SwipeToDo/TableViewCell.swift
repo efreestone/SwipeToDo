@@ -19,6 +19,7 @@ class TableViewCell: UITableViewCell {
     let gradientLayer = CAGradientLayer()
     var originalCenter = CGPoint()
     var deleteOnDragRelease = false
+    var completeOnDragRelease = false
     
     //Create strikethrough layer to mark items complete
     let label: StrikeThroughText
@@ -94,8 +95,10 @@ class TableViewCell: UITableViewCell {
         if recognizer.state == .Changed {
             let translation = recognizer.translationInView(self)
             center = CGPointMake(originalCenter.x + translation.x, originalCenter.y)
-            //Check if drag length far enough to delete
+            //Check if drag length far enough left to delete
             deleteOnDragRelease = frame.origin.x < -frame.size.width / 2.0
+            //Or far enough right to complete
+            completeOnDragRelease = frame.origin.x > frame.size.width / 2.0
         }
         
         //Gesture has ended
@@ -103,17 +106,28 @@ class TableViewCell: UITableViewCell {
             //Get original frame
             let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
             
-            if !deleteOnDragRelease {
-                //Item not being deleted, snap cell back into original location
-                UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
-                print("Delete on release = false")
-            } else {
+            //Item being deleted
+            if deleteOnDragRelease {
                 //Insure delegate and toDoItem both exist
                 if delegate != nil && toDoItem != nil {
                     //Notify delegate to delete item
                     delegate!.toDoItemDeleted(toDoItem!)
                 }
                 print("Delete on release = true")
+            //Item being completed
+            } else if completeOnDragRelease {
+                if toDoItem != nil {
+                    toDoItem!.isCompleted = true
+                }
+                //Set item as complete and unhide strikethrough
+                label.strikeThrough = true
+                itemCompleteLayer.hidden = false
+                UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
+                print("Complete on release = true")
+            } else {
+                //Item not being deleted/completed, snap cell back into original location
+                UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
+                print("Delete on release = false")
             }
         }
     }
