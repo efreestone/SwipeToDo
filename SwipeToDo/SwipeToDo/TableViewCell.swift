@@ -20,6 +20,10 @@ class TableViewCell: UITableViewCell {
     var originalCenter = CGPoint()
     var deleteOnDragRelease = false
     
+    //Create strikethrough layer to mark items complete
+    let label: StrikeThroughText
+    var itemCompleteLayer = CALayer()
+    
     //Create cell delegate and todo item as optionals. Will be set in ViewController
     var delegate: TableViewCellDelegate?
     var toDoItem: ToDoItem?
@@ -29,7 +33,17 @@ class TableViewCell: UITableViewCell {
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        //Initialize strikethrough layer
+        label = StrikeThroughText(frame: CGRect.null)
+        label.textColor = UIColor.whiteColor()
+        label.font = UIFont.boldSystemFontOfSize(16)
+        label.backgroundColor = UIColor.clearColor()
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        //Add strikethrough layer without default blue highlight
+        addSubview(label)
+        selectionStyle = .None
         
         //Add gradient layer for each cell
         gradientLayer.frame = bounds
@@ -40,6 +54,12 @@ class TableViewCell: UITableViewCell {
         gradientLayer.colors = [color1, color2, color3, color4]
         gradientLayer.locations = [0.0, 0.01, 0.95, 1.0]
         layer.insertSublayer(gradientLayer, atIndex: 0)
+        
+        //Add green layer for completed items, and hide 
+        itemCompleteLayer = CALayer(layer: layer)
+        itemCompleteLayer.backgroundColor = UIColor(red: 0.0, green: 0.6, blue: 0.0, alpha: 1.0).CGColor
+        itemCompleteLayer.hidden = true
+        
         
         //Add pan gesture to cell
         let recognizer = UIPanGestureRecognizer(target: self, action: #selector(TableViewCell.handlePan(_:)))
