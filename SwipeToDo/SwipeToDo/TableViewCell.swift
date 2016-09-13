@@ -26,7 +26,13 @@ class TableViewCell: UITableViewCell {
     
     //Create cell delegate and todo item as optionals. Will be set in ViewController
     var delegate: TableViewCellDelegate?
-    var toDoItem: ToDoItem?
+    var toDoItem: ToDoItem? {
+        didSet {
+            label.text = toDoItem!.textDescription
+            label.strikeThrough = toDoItem!.isCompleted
+            itemCompleteLayer.hidden = !label.strikeThrough
+        }
+    }
     
     required init(coder aDecoder: NSCoder) {
         fatalError("NSCoding not supported")
@@ -55,11 +61,11 @@ class TableViewCell: UITableViewCell {
         gradientLayer.locations = [0.0, 0.01, 0.95, 1.0]
         layer.insertSublayer(gradientLayer, atIndex: 0)
         
-        //Add green layer for completed items, and hide 
+        //Add green layer for completed items, and hide
         itemCompleteLayer = CALayer(layer: layer)
         itemCompleteLayer.backgroundColor = UIColor(red: 0.0, green: 0.6, blue: 0.0, alpha: 1.0).CGColor
         itemCompleteLayer.hidden = true
-        
+        layer.insertSublayer(itemCompleteLayer, atIndex: 0)
         
         //Add pan gesture to cell
         let recognizer = UIPanGestureRecognizer(target: self, action: #selector(TableViewCell.handlePan(_:)))
@@ -67,9 +73,13 @@ class TableViewCell: UITableViewCell {
         addGestureRecognizer(recognizer)
     }
     
+    let kLabelLeftMargin: CGFloat = 15.0
     override func layoutSubviews() {
         super.layoutSubviews()
+        //Set layers to fill full bounds
         gradientLayer.frame = bounds
+        itemCompleteLayer.frame = bounds
+        label.frame = CGRect(x: kLabelLeftMargin, y: 0, width: bounds.size.width - kLabelLeftMargin, height: bounds.size.height)
     }
     
     // MARK: - Horizontal pan gesture
