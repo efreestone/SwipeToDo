@@ -77,12 +77,46 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func toDoItemDeleted(toDoItem: ToDoItem) {
         let index = (toDoItems as NSArray).indexOfObject(toDoItem)
+//        var index = 0
+//        for i in 0..<toDoItems.count {
+//            if toDoItems[i] === toDoItem {
+//                index = i
+//                break
+//            }
+//        }
         if index == NSNotFound {
             return
         }
         
         //Remove item
         toDoItems.removeAtIndex(index)
+        
+        //Loop through visible cells to animate delete
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        let lastView = visibleCells[visibleCells.count - 1] as TableViewCell
+        var delay = 0.0
+        var startAnimating = false
+        for i in 0..<visibleCells.count {
+            let cell = visibleCells[i]
+            if startAnimating {
+                UIView.animateWithDuration(0.3, delay: delay, options: .CurveEaseInOut,
+                    animations: {() in
+                        cell.frame = CGRectOffset(cell.frame, 0.0, -cell.frame.size.height)
+                    },
+                    completion: {(finished: Bool) in
+                        if (cell == lastView) {
+                            self.tableView.reloadData()
+                        }
+                    }
+                )
+                delay += 0.03
+                print("Delay = \(delay)")
+            }
+            if cell.toDoItem == toDoItem {
+                startAnimating = true
+                cell.hidden = true
+            }
+        }
         
         //Use tableview animation to remove item
         tableView.beginUpdates()
