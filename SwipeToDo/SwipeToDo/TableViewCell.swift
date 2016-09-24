@@ -14,7 +14,7 @@ protocol TableViewCellDelegate {
     func toDoItemDeleted(todoItem: ToDoItem)
 }
 
-class TableViewCell: UITableViewCell {
+class TableViewCell: UITableViewCell, UITextFieldDelegate {
 
     let gradientLayer = CAGradientLayer()
     var originalCenter = CGPoint()
@@ -66,6 +66,10 @@ class TableViewCell: UITableViewCell {
         tickLabel.textAlignment = .Right
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        //Set label delegate. This is used to dismiss keyboard on edit.
+        label.delegate = self
+        label.contentVerticalAlignment = .Center
         
         //Add strikethrough and cue layers without default blue highlight
         addSubview(label)
@@ -181,5 +185,27 @@ class TableViewCell: UITableViewCell {
         }
         return false
     }
-
+    
+    // MARK: - UITextFieldDelegate methods
+    
+    //Close keyboard on enter
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return false
+    }
+    
+    //Disable edit of completed items
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+        if toDoItem != nil {
+            return !toDoItem!.isCompleted
+        }
+        return false
+    }
+    
+    //Set text once edit has ended
+    func textFieldDidEndEditing(textField: UITextField) {
+        if toDoItem != nil {
+            toDoItem!.textDescription = textField.text!
+        }
+    }
 }

@@ -96,26 +96,35 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let lastView = visibleCells[visibleCells.count - 1] as TableViewCell
         var delay = 0.0
         var startAnimating = false
+        var cellNum = 0
         for i in 0..<visibleCells.count {
             let cell = visibleCells[i]
             if startAnimating {
                 UIView.animateWithDuration(0.3, delay: delay, options: .CurveEaseInOut,
                     animations: {() in
+                        //Slide individual cell up
                         cell.frame = CGRectOffset(cell.frame, 0.0, -cell.frame.size.height)
                     },
                     completion: {(finished: Bool) in
                         if (cell == lastView) {
+                            //Reload data after animation, insures tableview has accurate info on cell locations
                             self.tableView.reloadData()
                         }
                     }
                 )
+                //Adjaust delay so animation cascades, otherwise only first cell animates before the rest catch up
                 delay += 0.03
-                print("Delay = \(delay)")
+                
+                cellNum += 1
+//                print("Delay = \(delay) on cell \(cellNum)")
             }
+            //Insure cell is todo item. Moved to be hit after first iteration to avoid jerky animation start
             if cell.toDoItem == toDoItem {
                 startAnimating = true
+                //Hide cell to avoid ghosting over animated cells
                 cell.hidden = true
             }
+            //print("Delay = \(delay) on cell \(cellNum) after startAnimation")
         }
         
         //Use tableview animation to remove item
