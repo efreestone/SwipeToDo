@@ -12,6 +12,10 @@ import UIKit
 protocol TableViewCellDelegate {
     //Item has been deleted
     func toDoItemDeleted(todoItem: ToDoItem)
+    //Edit process has begun for cell
+    func cellDidBeginEditing(editingCell: TableViewCell)
+    //Edit process has ended for cell
+    func cellDidEndEditing(editingCell: TableViewCell)
 }
 
 class TableViewCell: UITableViewCell, UITextFieldDelegate {
@@ -202,10 +206,21 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         return false
     }
     
+    //Call delegate cell did begin editing method
+    func textFieldDidBeginEditing(textField: UITextField) {
+        if delegate != nil {
+            delegate!.cellDidBeginEditing(self)
+        }
+    }
+    
     //Set text once edit has ended
     func textFieldDidEndEditing(textField: UITextField) {
         if toDoItem != nil {
             toDoItem!.textDescription = textField.text!
+        }
+        //Call delegate cell did end editing method
+        if delegate != nil {
+            delegate!.cellDidEndEditing(self)
         }
     }
 }

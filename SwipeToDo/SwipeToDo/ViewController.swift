@@ -73,7 +73,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             return cell
     }
     
-    // MARK: - Tableview delegate
+    // MARK: - TableViewCellDelegate
     
     func toDoItemDeleted(toDoItem: ToDoItem) {
         let index = (toDoItems as NSArray).indexOfObject(toDoItem)
@@ -132,6 +132,34 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
         tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
         tableView.endUpdates()
+    }
+    
+    //Edit started, animate cell to top with animation and lower alpha of all other cells
+    func cellDidBeginEditing(editingCell: TableViewCell) {
+        let editingOffset = tableView.contentOffset.y - editingCell.frame.origin.y as CGFloat
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for cell in visibleCells {
+            UIView.animateWithDuration(0.3, animations: {() in
+                cell.transform = CGAffineTransformMakeTranslation(0, editingOffset)
+                if cell !== editingCell {
+                    cell.alpha = 0.3
+                }
+            })
+        }
+    }
+    
+    //Edit ended, animate cells back into place and return alpha of other cells to normal
+    func cellDidEndEditing(editingCell: TableViewCell) {
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for cell: TableViewCell in visibleCells {
+            UIView.animateWithDuration(0.5, animations: {() in
+                cell.transform = CGAffineTransformIdentity
+                if cell !== editingCell {
+                    cell.alpha = 1.0
+                }
+            })
+        }
+        
     }
     
     func colorForIndex(index: Int) -> UIColor {
