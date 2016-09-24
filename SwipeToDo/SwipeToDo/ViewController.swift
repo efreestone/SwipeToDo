@@ -73,10 +73,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             return cell
     }
     
-    // MARK: - Tableview delegate
+    // MARK: - TableViewCellDelegate
     
     func toDoItemDeleted(toDoItem: ToDoItem) {
         let index = (toDoItems as NSArray).indexOfObject(toDoItem)
+//        var index = 0
+//        for i in 0..<toDoItems.count {
+//            if toDoItems[i] === toDoItem {
+//                index = i
+//                break
+//            }
+//        }
         if index == NSNotFound {
             return
         }
@@ -84,11 +91,75 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //Remove item
         toDoItems.removeAtIndex(index)
         
+        //Loop through visible cells to animate delete
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        let lastView = visibleCells[visibleCells.count - 1] as TableViewCell
+        var delay = 0.0
+        var startAnimating = false
+        var cellNum = 0
+        for i in 0..<visibleCells.count {
+            let cell = visibleCells[i]
+            if startAnimating {
+                UIView.animateWithDuration(0.3, delay: delay, options: .CurveEaseInOut,
+                    animations: {() in
+                        //Slide individual cell up
+                        cell.frame = CGRectOffset(cell.frame, 0.0, -cell.frame.size.height)
+                    },
+                    completion: {(finished: Bool) in
+                        if (cell == lastView) {
+                            //Reload data after animation, insures tableview has accurate info on cell locations
+                            self.tableView.reloadData()
+                        }
+                    }
+                )
+                //Adjaust delay so animation cascades, otherwise only first cell animates before the rest catch up
+                delay += 0.03
+                
+                cellNum += 1
+//                print("Delay = \(delay) on cell \(cellNum)")
+            }
+            //Insure cell is todo item. Moved to be hit after first iteration to avoid jerky animation start
+            if cell.toDoItem == toDoItem {
+                startAnimating = true
+                //Hide cell to avoid ghosting over animated cells
+                cell.hidden = true
+            }
+            //print("Delay = \(delay) on cell \(cellNum) after startAnimation")
+        }
+        
         //Use tableview animation to remove item
         tableView.beginUpdates()
         let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
         tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
         tableView.endUpdates()
+    }
+    
+    //Edit started, animate cell to top with animation and lower alpha of all other cells
+    func cellDidBeginEditing(editingCell: TableViewCell) {
+        let editingOffset = tableView.contentOffset.y - editingCell.frame.origin.y as CGFloat
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for cell in visibleCells {
+            UIView.animateWithDuration(0.3, animations: {() in
+                cell.transform = CGAffineTransformMakeTranslation(0, editingOffset)
+                if cell !== editingCell {
+                    cell.alpha = 0.3
+                }
+            })
+        }
+    }
+    
+    //Edit ended, animate cells back into place and return alpha of other cells to normal
+    func cellDidEndEditing(editingCell: TableViewCell) {
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for cell: TableViewCell in visibleCells {
+            UIView.animateWithDuration(0.5, animations: {() in
+                cell.transform = CGAffineTransformIdentity
+                if cell !== editingCell {
+                    cell.alpha = 1.0
+                }
+            })
+        }
+        
     }
     
     func colorForIndex(index: Int) -> UIColor {
