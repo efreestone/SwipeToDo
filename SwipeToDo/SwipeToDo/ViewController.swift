@@ -106,8 +106,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                         }
                     }
                 )
-                //Adjaust delay so animation cascades, otherwise only first cell animates before the rest catch up
-                delay += 0.03
+                //Adjust delay so animation cascades, otherwise only first cell animates before the rest catch up
+                delay += 0.035
                 
                 cellNum += 1
 //                print("Delay = \(delay) on cell \(cellNum)")
