@@ -190,6 +190,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
+    //Scroll or drag ended. Check distance and add new item if far enough
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        //Check if user dragged far enough to add cell
+        if pullDownInProgress && -scrollView.contentOffset.y > tableView.rowHeight {
+            // TODO Add new item
+            print("add triggered")
+        }
+        //Set pull bool to false and remove placeholder cell
+        pullDownInProgress = false
+        placeHolderCell.removeFromSuperview()
+    }
+    
     // MARK: - TableViewDelegate
     
     func colorForIndex(index: Int) -> UIColor {
