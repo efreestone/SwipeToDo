@@ -136,6 +136,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             UIView.animateWithDuration(0.3, animations: {() in
                 cell.transform = CGAffineTransformMakeTranslation(0, editingOffset)
                 if cell !== editingCell {
+                    //Lower alpha of other cells to highlight editing cell
                     cell.alpha = 0.3
                 }
             })
@@ -149,11 +150,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             UIView.animateWithDuration(0.5, animations: {() in
                 cell.transform = CGAffineTransformIdentity
                 if cell !== editingCell {
+                    //Return nonedited cell alphas back to 1
                     cell.alpha = 1.0
                 }
             })
         }
-        
     }
     
     func colorForIndex(index: Int) -> UIColor {
