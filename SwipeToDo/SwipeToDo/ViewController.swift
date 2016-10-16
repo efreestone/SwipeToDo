@@ -150,12 +150,47 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             UIView.animateWithDuration(0.5, animations: {() in
                 cell.transform = CGAffineTransformIdentity
                 if cell !== editingCell {
-                    //Return nonedited cell alphas back to 1
+                    //Return non-edited cell alphas back to 1
                     cell.alpha = 1.0
                 }
             })
         }
     }
+    
+    // MARK: - UIScrollViewDelegate
+    
+    //Create placeholder for cell being added
+    let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+    //Create bool for pulldown in progress
+    var pullDownInProgress = false
+    
+    //Scroll or drag beigns. Check location and start insert process if pulling from top
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        //Set bool true if drag in progress is starting from top of list
+        pullDownInProgress = scrollView.contentOffset.y <= 0.0
+        placeHolderCell.backgroundColor = UIColor.redColor()
+        if pullDownInProgress {
+            //Insert placeholder cell at top
+            tableView.insertSubview(placeHolderCell, atIndex: 0)
+        }
+    }
+    
+    //Scroll took place. Add placeholder cell if from top
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        let scrollViewContentOffsetY = scrollView.contentOffset.y
+        
+        if pullDownInProgress && scrollViewContentOffsetY <= 0.0 {
+            //Maintain placeholder cell location
+            placeHolderCell.frame = CGRect(x: 0, y: -tableView.rowHeight, width: tableView.frame.size.width, height: tableView.rowHeight)
+            //Set placeholder text with ternary based on Y offset
+            placeHolderCell.label.text = -scrollViewContentOffsetY > tableView.rowHeight ? "Release to add item" : "Pull to add item"
+            placeHolderCell.alpha = min(1.0, -scrollViewContentOffsetY / tableView.rowHeight)
+        } else {
+            pullDownInProgress = false
+        }
+    }
+    
+    // MARK: - TableViewDelegate
     
     func colorForIndex(index: Int) -> UIColor {
         let itemCount = toDoItems.count - 1
@@ -167,8 +202,5 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.backgroundColor = colorForIndex(indexPath.row)
     }
     
-    
-    
-
 }
 
