@@ -77,13 +77,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func toDoItemDeleted(toDoItem: ToDoItem) {
         let index = (toDoItems as NSArray).indexOfObject(toDoItem)
-//        var index = 0
-//        for i in 0..<toDoItems.count {
-//            if toDoItems[i] === toDoItem {
-//                index = i
-//                break
-//            }
-//        }
+
         if index == NSNotFound {
             return
         }
