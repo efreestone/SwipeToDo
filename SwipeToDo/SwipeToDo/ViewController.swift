@@ -122,6 +122,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
             })
         }
+        //Check if textField is blank
+        if editingCell.toDoItem!.textDescription == "" {
+            toDoItemDeleted(editingCell.toDoItem!)
+        }
     }
     
     //Delete item

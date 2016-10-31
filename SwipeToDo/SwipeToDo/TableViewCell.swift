@@ -216,12 +216,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     //Set text once edit has ended
     func textFieldDidEndEditing(textField: UITextField) {
         if toDoItem != nil {
-            //Check if textField is blank
-            if textField.text == "" {
-                delegate!.toDoItemDeleted(toDoItem!)
-            } else {
-                toDoItem!.textDescription = textField.text!
-            }
+            toDoItem!.textDescription = textField.text!
         }
         //Call delegate cell did end editing method
         if delegate != nil {
