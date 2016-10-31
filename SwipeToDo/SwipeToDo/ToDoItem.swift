@@ -14,8 +14,8 @@ class ToDoItem: NSObject {
     var isCompleted: Bool
     
     //Initialize ToDoItem and set default values
-    init(textDesc: String) {
-        self.textDescription = textDesc
+    init(textDescription: String) {
+        self.textDescription = textDescription
         self.isCompleted = false
         
     }

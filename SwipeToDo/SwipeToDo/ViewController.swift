@@ -33,18 +33,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
         //Create default list items for testing
-        toDoItems.append(ToDoItem(textDesc: "feed the cat"))
-        toDoItems.append(ToDoItem(textDesc: "buy eggs"))
-        toDoItems.append(ToDoItem(textDesc: "watch WWDC videos"))
-        toDoItems.append(ToDoItem(textDesc: "rule the Web"))
-        toDoItems.append(ToDoItem(textDesc: "buy a new iPhone"))
-        toDoItems.append(ToDoItem(textDesc: "darn holes in socks"))
-        toDoItems.append(ToDoItem(textDesc: "write this tutorial"))
-        toDoItems.append(ToDoItem(textDesc: "master Swift"))
-        toDoItems.append(ToDoItem(textDesc: "learn to draw"))
-        toDoItems.append(ToDoItem(textDesc: "get more exercise"))
-        toDoItems.append(ToDoItem(textDesc: "catch up with Mom"))
-        toDoItems.append(ToDoItem(textDesc: "get a hair cut"))
+        toDoItems.append(ToDoItem(textDescription: "feed the cat"))
+        toDoItems.append(ToDoItem(textDescription: "buy eggs"))
+        toDoItems.append(ToDoItem(textDescription: "watch WWDC videos"))
+        toDoItems.append(ToDoItem(textDescription: "rule the Web"))
+        toDoItems.append(ToDoItem(textDescription: "buy a new iPhone"))
+        toDoItems.append(ToDoItem(textDescription: "darn holes in socks"))
+        toDoItems.append(ToDoItem(textDescription: "write this tutorial"))
+        toDoItems.append(ToDoItem(textDescription: "master Swift"))
+        toDoItems.append(ToDoItem(textDescription: "learn to draw"))
+        toDoItems.append(ToDoItem(textDescription: "get more exercise"))
+        toDoItems.append(ToDoItem(textDescription: "catch up with Mom"))
+        toDoItems.append(ToDoItem(textDescription: "get a hair cut"))
     }
     
     // MARK: - Tableview data source
@@ -73,11 +73,61 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             return cell
     }
     
-    // MARK: - TableViewCellDelegate
+    // MARK: - TableViewCellDelegate (add, edit and delete items)
     
+    //Add item, triggered from scrollViewDidEndDragging
+    func toDoItemAdded() {
+        //Create and add blank item
+        let newToDoItem = ToDoItem(textDescription: "")
+        toDoItems.insert(newToDoItem, atIndex: 0)
+        tableView.reloadData()
+        //Enter edit mode to fill in item
+        var newEditCell: TableViewCell
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for cell in visibleCells {
+            if (cell.toDoItem === newToDoItem) {
+                newEditCell = cell
+                newEditCell.label.becomeFirstResponder()
+                break
+            }
+        }
+    }
+    
+    //Edit started, animate cell to top with animation and lower alpha of all other cells
+    func cellDidBeginEditing(editingCell: TableViewCell) {
+        let editingOffset = tableView.contentOffset.y - editingCell.frame.origin.y as CGFloat
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for cell in visibleCells {
+            UIView.animateWithDuration(0.3, animations: {() in
+                cell.transform = CGAffineTransformMakeTranslation(0, editingOffset)
+                //Change alpha for all cells that are not the actual cell being edited using Identity Operator.
+                //Multiple instances of editingCell could potentially exist
+                if cell !== editingCell {
+                    //Lower alpha of other cells to highlight editing cell
+                    cell.alpha = 0.3
+                }
+            })
+        }
+    }
+    
+    //Edit ended, animate cells back into place and return alpha of other cells to normal
+    func cellDidEndEditing(editingCell: TableViewCell) {
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for cell: TableViewCell in visibleCells {
+            UIView.animateWithDuration(0.5, animations: {() in
+                cell.transform = CGAffineTransformIdentity
+                if cell !== editingCell {
+                    //Return non-edited cell alphas back to 1
+                    cell.alpha = 1.0
+                }
+            })
+        }
+    }
+    
+    //Delete item
     func toDoItemDeleted(toDoItem: ToDoItem) {
         let index = (toDoItems as NSArray).indexOfObject(toDoItem)
-
+        
         if index == NSNotFound {
             return
         }
@@ -110,7 +160,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 delay += 0.035
                 
                 cellNum += 1
-//                print("Delay = \(delay) on cell \(cellNum)")
+                //                print("Delay = \(delay) on cell \(cellNum)")
             }
             //Insure cell is todo item. Moved to be hit after first iteration to avoid jerky animation start
             if cell.toDoItem == toDoItem {
@@ -126,37 +176,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
         tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
         tableView.endUpdates()
-    }
-    
-    //Edit started, animate cell to top with animation and lower alpha of all other cells
-    func cellDidBeginEditing(editingCell: TableViewCell) {
-        let editingOffset = tableView.contentOffset.y - editingCell.frame.origin.y as CGFloat
-        let visibleCells = tableView.visibleCells as! [TableViewCell]
-        for cell in visibleCells {
-            UIView.animateWithDuration(0.3, animations: {() in
-                cell.transform = CGAffineTransformMakeTranslation(0, editingOffset)
-                //Change alpha for all cells that are not the actual cell being edited using Identity Operator.
-                //Multiple instances of editingCell could potentially exist
-                if cell !== editingCell {
-                    //Lower alpha of other cells to highlight editing cell
-                    cell.alpha = 0.3
-                }
-            })
-        }
-    }
-    
-    //Edit ended, animate cells back into place and return alpha of other cells to normal
-    func cellDidEndEditing(editingCell: TableViewCell) {
-        let visibleCells = tableView.visibleCells as! [TableViewCell]
-        for cell: TableViewCell in visibleCells {
-            UIView.animateWithDuration(0.5, animations: {() in
-                cell.transform = CGAffineTransformIdentity
-                if cell !== editingCell {
-                    //Return non-edited cell alphas back to 1
-                    cell.alpha = 1.0
-                }
-            })
-        }
     }
     
     // MARK: - UIScrollViewDelegate
@@ -196,7 +215,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         //Check if user dragged far enough to add cell
         if pullDownInProgress && -scrollView.contentOffset.y > tableView.rowHeight {
-            // TODO Add new item
+            //Add new blank cell and trigger edit mode
+            toDoItemAdded()
             print("add triggered")
         }
         //Set pull bool to false and remove placeholder cell
