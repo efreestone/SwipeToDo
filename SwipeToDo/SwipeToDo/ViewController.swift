@@ -135,6 +135,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         for cell in visibleCells {
             UIView.animateWithDuration(0.3, animations: {() in
                 cell.transform = CGAffineTransformMakeTranslation(0, editingOffset)
+                //Change alpha for all cells that are not the actual cell being edited using Identity Operator.
+                //Multiple instances of editingCell could potentially exist
                 if cell !== editingCell {
                     //Lower alpha of other cells to highlight editing cell
                     cell.alpha = 0.3
