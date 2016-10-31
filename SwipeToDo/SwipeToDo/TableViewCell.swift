@@ -26,6 +26,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     var crossLabel: UILabel
     var completeOnDragRelease = false
     var tickLabel: UILabel
+    let myGreenColor = UIColor(red: 0.0, green: 0.7, blue: 0.0, alpha: 1.0)
     
     //Create strikethrough layer to mark items complete
     let label: StrikeThroughText
@@ -49,7 +50,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         //Initialize strikethrough layer
         label = StrikeThroughText(frame: CGRect.null)
         label.textColor = UIColor.whiteColor()
-        label.font = UIFont.boldSystemFontOfSize(16)
+        label.font = UIFont.boldSystemFontOfSize(18)
         label.backgroundColor = UIColor.clearColor()
         
         //Utility method for creating contextual cues
@@ -93,7 +94,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         
         //Add green layer for completed items, and hide
         itemCompleteLayer = CALayer(layer: layer)
-        itemCompleteLayer.backgroundColor = UIColor(red: 0.0, green: 0.7, blue: 0.0, alpha: 1.0).CGColor
+        itemCompleteLayer.backgroundColor = myGreenColor.CGColor
         itemCompleteLayer.hidden = true
         layer.insertSublayer(itemCompleteLayer, atIndex: 0)
         
@@ -142,7 +143,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
             tickLabel.alpha = cueAlpha
             //Change cue colors to indicate cell has been pulled far enough
             crossLabel.textColor = deleteOnDragRelease ? UIColor.redColor() : UIColor.whiteColor()
-            tickLabel.textColor = completeOnDragRelease ? UIColor.greenColor() : UIColor.whiteColor()
+            tickLabel.textColor = completeOnDragRelease ? myGreenColor : UIColor.whiteColor()
         }
         
         //Gesture has ended
