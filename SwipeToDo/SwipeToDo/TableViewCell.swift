@@ -83,8 +83,8 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         
         //Add gradient layer for each cell
         gradientLayer.frame = bounds
-        let color1 = UIColor(white: 1.0, alpha: 0.2).CGColor as CGColorRef
-        let color2 = UIColor(white: 1.0, alpha: 0.1).CGColor as CGColorRef
+        let color1 = UIColor(white: 0.9, alpha: 0.2).CGColor as CGColorRef
+        let color2 = UIColor(white: 0.9, alpha: 0.1).CGColor as CGColorRef
         let color3 = UIColor.clearColor().CGColor as CGColorRef
         let color4 = UIColor(white: 0.0, alpha: 0.1).CGColor as CGColorRef
         gradientLayer.colors = [color1, color2, color3, color4]
@@ -93,7 +93,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         
         //Add green layer for completed items, and hide
         itemCompleteLayer = CALayer(layer: layer)
-        itemCompleteLayer.backgroundColor = UIColor(red: 0.0, green: 0.6, blue: 0.0, alpha: 1.0).CGColor
+        itemCompleteLayer.backgroundColor = UIColor(red: 0.0, green: 0.7, blue: 0.0, alpha: 1.0).CGColor
         itemCompleteLayer.hidden = true
         layer.insertSublayer(itemCompleteLayer, atIndex: 0)
         
@@ -143,7 +143,6 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
             //Change cue colors to indicate cell has been pulled far enough
             crossLabel.textColor = deleteOnDragRelease ? UIColor.redColor() : UIColor.whiteColor()
             tickLabel.textColor = completeOnDragRelease ? UIColor.greenColor() : UIColor.whiteColor()
-            
         }
         
         //Gesture has ended
@@ -178,7 +177,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     
-    //Cancel gesture if verticle (scrolling)
+    //Cancel gesture if vertical (scrolling)
     override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translationInView(superview!)
