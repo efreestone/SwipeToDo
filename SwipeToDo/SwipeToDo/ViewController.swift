@@ -107,7 +107,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 if cell !== editingCell {
                     //Lower alpha of other cells to highlight editing cell
                     cell.alpha = 0.3
-                    print("NOT actual editing cell")
                 }
             })
         }
@@ -169,7 +168,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 delay += 0.035
                 
                 cellNum += 1
-                //                print("Delay = \(delay) on cell \(cellNum)")
+                //print("Delay = \(delay) on cell \(cellNum)")
             }
             //Insure cell is todo item. Moved to be hit after first iteration to avoid jerky animation start
             if cell.toDoItem == toDoItem {
@@ -191,7 +190,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     //Create placeholder for cell being added
     let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
-    //Create bool for pulldown in progress
+    //Create bools for pulldown ad edit in progress
     var pullDownInProgress = false
     var editInProgress = false
     
@@ -220,7 +219,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             placeHolderCell.alpha = min(1.0, -scrollViewContentOffsetY / tableView.rowHeight)
         } else {
             pullDownInProgress = false
-            print("scrollViewDidScroll ELSE, trigger reload")
+            //print("scrollViewDidScroll ELSE, trigger reload")
             //pullDownInProgress = scrollViewContentOffsetY <= 0.0 ? true : false
         }
     }
