@@ -88,6 +88,8 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         let color2 = UIColor(white: 0.9, alpha: 0.1).CGColor as CGColorRef
         let color3 = UIColor.clearColor().CGColor as CGColorRef
         let color4 = UIColor(white: 0.0, alpha: 0.1).CGColor as CGColorRef
+    /* Removing colors 2 & 3 makes a more stock looking gradient.
+    jThis will need tweaked in either case in the future */
         gradientLayer.colors = [color1, color2, color3, color4]
         gradientLayer.locations = [0.0, 0.01, 0.95, 1.0]
         layer.insertSublayer(gradientLayer, atIndex: 0)
