@@ -84,7 +84,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         
         //Add gradient layer for each cell
         gradientLayer.frame = bounds
-        let color1 = UIColor(white: 0.9, alpha: 0.2).CGColor as CGColorRef
+        let color1 = UIColor(white: 1.0, alpha: 0.2).CGColor as CGColorRef
         let color2 = UIColor(white: 0.9, alpha: 0.1).CGColor as CGColorRef
         let color3 = UIColor.clearColor().CGColor as CGColorRef
         let color4 = UIColor(white: 0.0, alpha: 0.1).CGColor as CGColorRef

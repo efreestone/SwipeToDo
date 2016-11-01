@@ -82,6 +82,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         toDoItems.insert(newToDoItem, atIndex: 0)
         tableView.reloadData()
         //Enter edit mode to fill in item
+        editInProgress = true
         var newEditCell: TableViewCell
         let visibleCells = tableView.visibleCells as! [TableViewCell]
         for cell in visibleCells {
@@ -95,6 +96,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     //Edit started, animate cell to top with animation and lower alpha of all other cells
     func cellDidBeginEditing(editingCell: TableViewCell) {
+        editInProgress = true
         let editingOffset = tableView.contentOffset.y - editingCell.frame.origin.y as CGFloat
         let visibleCells = tableView.visibleCells as! [TableViewCell]
         for cell in visibleCells {
@@ -105,6 +107,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 if cell !== editingCell {
                     //Lower alpha of other cells to highlight editing cell
                     cell.alpha = 0.3
+                    print("NOT actual editing cell")
                 }
             })
         }
@@ -126,6 +129,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         if editingCell.toDoItem!.textDescription == "" {
             toDoItemDeleted(editingCell.toDoItem!)
         }
+        editInProgress = false
+        tableView.reloadData()
     }
     
     //Delete item
@@ -188,15 +193,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     //Create bool for pulldown in progress
     var pullDownInProgress = false
+    var editInProgress = false
     
     //Scroll or drag beigns. Check location and start insert process if pulling from top
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         //Set bool true if drag in progress is starting from top of list
         pullDownInProgress = scrollView.contentOffset.y <= 0.0
         placeHolderCell.backgroundColor = UIColor.redColor()
-        if pullDownInProgress {
+        if pullDownInProgress && !editInProgress {
             //Insert placeholder cell at top
             tableView.insertSubview(placeHolderCell, atIndex: 0)
+        } else {
+            print("Edit is in progress")
         }
     }
     
@@ -204,7 +212,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func scrollViewDidScroll(scrollView: UIScrollView) {
         let scrollViewContentOffsetY = scrollView.contentOffset.y
         
-        if pullDownInProgress && scrollViewContentOffsetY <= 0.0 {
+        if (pullDownInProgress && !editInProgress) && scrollViewContentOffsetY <= 0.0 {
             //Maintain placeholder cell location
             placeHolderCell.frame = CGRect(x: 0, y: -tableView.rowHeight, width: tableView.frame.size.width, height: tableView.rowHeight)
             //Set placeholder text with ternary based on Y offset
@@ -212,6 +220,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             placeHolderCell.alpha = min(1.0, -scrollViewContentOffsetY / tableView.rowHeight)
         } else {
             pullDownInProgress = false
+            print("scrollViewDidScroll ELSE, trigger reload")
+            //pullDownInProgress = scrollViewContentOffsetY <= 0.0 ? true : false
         }
     }
     
