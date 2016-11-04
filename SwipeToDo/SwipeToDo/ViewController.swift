@@ -19,7 +19,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // Do any additional setup after loading the view, typically from a nib.
         
         //Set pinch gesture recognizer and add to tableview
-        pinchRecognizer.addTarget(self, action: "handlePinch")
+        pinchRecognizer.addTarget(self, action: #selector(ViewController.handlePinch(_:)))
         tableView.addGestureRecognizer(pinchRecognizer)
         
         //Set tableview data source and delegate
@@ -221,7 +221,36 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func pinchStarted(recognizer: UIPinchGestureRecognizer) {
-    
+        //Get initial touch points, with top and bottom properly IDed
+        initialTouchPoints = getNormalizedTouchPoints(recognizer)
+        
+        upperCellIndex = -100
+        lowerCellIndex = -100
+        //Locate touched cells
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for i in 0..<visibleCells.count {
+            let cell = visibleCells[1]
+            if viewContainsPoints(cell, point: initialTouchPoints.upper) {
+                upperCellIndex = i
+                //Highlight cell - FOR DEBUGGING
+                cell.backgroundColor = UIColor.purpleColor()
+            }
+            if viewContainsPoints(cell, point: initialTouchPoints.lower) {
+                lowerCellIndex = i
+                //Highlight cell - FOR DEBUGGING
+                cell.backgroundColor = UIColor.purpleColor()
+            }
+        }
+        
+        //Check if cells are neighboring
+        if abs(upperCellIndex - lowerCellIndex) == 1 {
+            //Initiate pinch and add placeholder cell
+            pinchInProgress = true
+            let precedingCell = visibleCells[upperCellIndex]
+            placeHolderCell.frame = CGRectOffset(precedingCell.frame, 0.00, tableView.rowHeight / 2.0)
+            placeHolderCell.backgroundColor = UIColor.redColor()
+            tableView.insertSubview(placeHolderCell, atIndex: 0)
+        }
     }
     
     func pinchChanged(recognizer: UIPinchGestureRecognizer) {
@@ -236,7 +265,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func getNormalizedTouchPoints(recognizer: UIPinchGestureRecognizer) -> TouchPoints {
         var pointOne = recognizer.locationOfTouch(0, inView: tableView)
         var pointTwo = recognizer.locationOfTouch(1, inView: tableView)
-        //Check that pointOne is top-most touch, swapping if needed
+        //Check that pointOne is top-most touch, swap if not
         if pointOne.y > pointTwo.y {
             let tempPoint = pointOne
             pointOne = pointTwo
