@@ -193,6 +193,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     // MARK: - pinch-to-add methods
     
+    struct TouchPoints {
+        var upper: CGPoint
+        var lower: CGPoint
+    }
+    
+    var upperCellIndex = -100
+    var lowerCellIndex = -100
+    //Create instance of TouchPoints struct
+    var initialTouchPoints: TouchPoints!
+    //Create bools for pinch
+    var pinchExceededRequiredDistance = false
     var pinchInProgress = false
     
     func handlePinch(recognizer: UIPinchGestureRecognizer) {
@@ -219,6 +230,26 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func pinchEnded(recognizer: UIPinchGestureRecognizer) {
         
+    }
+    
+    //Get both touch points and insure top and bottom are properly identified, return TouchPoints
+    func getNormalizedTouchPoints(recognizer: UIPinchGestureRecognizer) -> TouchPoints {
+        var pointOne = recognizer.locationOfTouch(0, inView: tableView)
+        var pointTwo = recognizer.locationOfTouch(1, inView: tableView)
+        //Check that pointOne is top-most touch, swapping if needed
+        if pointOne.y > pointTwo.y {
+            let tempPoint = pointOne
+            pointOne = pointTwo
+            pointTwo = tempPoint
+        }
+        //Return touches and TouchPoints
+        return TouchPoints(upper: pointOne, lower: pointTwo)
+    }
+    
+    //Make sure point actually exists in the view. Cells are full width, so only checking y axis
+    func viewContainsPoints(view: UIView, point: CGPoint) -> Bool {
+        let frame = view.frame
+        return (frame.origin.y < point.y) && (frame.origin.y + (frame.size.height) > point.y)
     }
     
     // MARK: - UIScrollViewDelegate
