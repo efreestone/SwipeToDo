@@ -12,10 +12,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var tableView: UITableView!
     
     var toDoItems = [ToDoItem]()
+    let pinchRecognizer = UIPinchGestureRecognizer()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        //Set pinch gesture recognizer and add to tableview
+        pinchRecognizer.addTarget(self, action: "handlePinch")
+        tableView.addGestureRecognizer(pinchRecognizer)
         
         //Set tableview data source and delegate
         tableView.dataSource = self
@@ -184,6 +189,36 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
         tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
         tableView.endUpdates()
+    }
+    
+    // MARK: - pinch-to-add methods
+    
+    var pinchInProgress = false
+    
+    func handlePinch(recognizer: UIPinchGestureRecognizer) {
+        if recognizer.state == .Began {
+            pinchStarted(recognizer)
+        }
+        
+        if recognizer.state == .Changed && pinchInProgress && recognizer.numberOfTouches() == 2 {
+            pinchChanged(recognizer)
+        }
+        
+        if recognizer.state == .Ended {
+            pinchEnded(recognizer)
+        }
+    }
+    
+    func pinchStarted(recognizer: UIPinchGestureRecognizer) {
+    
+    }
+    
+    func pinchChanged(recognizer: UIPinchGestureRecognizer) {
+        
+    }
+    
+    func pinchEnded(recognizer: UIPinchGestureRecognizer) {
+        
     }
     
     // MARK: - UIScrollViewDelegate
