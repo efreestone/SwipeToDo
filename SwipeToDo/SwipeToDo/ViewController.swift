@@ -221,6 +221,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func pinchStarted(recognizer: UIPinchGestureRecognizer) {
+        print("Pinch started")
         //Get initial touch points, with top and bottom properly IDed
         initialTouchPoints = getNormalizedTouchPoints(recognizer)
         
@@ -229,7 +230,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //Locate touched cells
         let visibleCells = tableView.visibleCells as! [TableViewCell]
         for i in 0..<visibleCells.count {
-            let cell = visibleCells[1]
+            let cell = visibleCells[i]
             if viewContainsPoints(cell, point: initialTouchPoints.upper) {
                 upperCellIndex = i
                 //Highlight cell - FOR DEBUGGING
@@ -242,7 +243,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
         }
         
-        //Check if cells are neighboring
+        //Make sure cells are neighboring, start pinch if they are
         if abs(upperCellIndex - lowerCellIndex) == 1 {
             //Initiate pinch and add placeholder cell
             pinchInProgress = true
@@ -254,7 +255,36 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func pinchChanged(recognizer: UIPinchGestureRecognizer) {
+        print("Pinch changed")
+        //Find current touch points
+        let currentTouchPoints = getNormalizedTouchPoints(recognizer)
         
+        //Check how much touch points have changed
+        let upperDelta = currentTouchPoints.upper.y - initialTouchPoints.upper.y
+        let lowerDelta = initialTouchPoints.lower.y - currentTouchPoints.lower.y
+        
+        let delta = -min(0, min(upperDelta, lowerDelta))
+        
+        //Change offset for cells to part. Negative for cells above, positive for below
+        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        for i in 0..<visibleCells.count {
+            let cell = visibleCells[i]
+            if i <= upperCellIndex {
+                cell.transform = CGAffineTransformMakeTranslation(0, -delta)
+            }
+            if i >= lowerCellIndex {
+                cell.transform = CGAffineTransformMakeTranslation(0, delta)
+            }
+        }
+        //Scale placeholder to provide a "spring out" effect
+        let gapSize = delta * 2
+        let cappedGapSize = min(gapSize, tableView.rowHeight)
+        placeHolderCell.transform = CGAffineTransformMakeScale(1.0, cappedGapSize / tableView.rowHeight)
+        placeHolderCell.label.text = gapSize > tableView.rowHeight ? "Release to add item" : "Pull apart to add item"
+        placeHolderCell.alpha = min(1.0, gapSize / tableView.rowHeight)
+        
+        //Check pinch distance and set bool accordingly
+        pinchExceededRequiredDistance = gapSize > tableView.rowHeight
     }
     
     func pinchEnded(recognizer: UIPinchGestureRecognizer) {
