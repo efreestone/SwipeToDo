@@ -38,18 +38,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
         //Create default list items for testing
-        toDoItems.append(ToDoItem(textDescription: "feed the cat"))
-        toDoItems.append(ToDoItem(textDescription: "buy eggs"))
-        toDoItems.append(ToDoItem(textDescription: "watch WWDC videos"))
-        toDoItems.append(ToDoItem(textDescription: "rule the Web"))
-        toDoItems.append(ToDoItem(textDescription: "buy a new iPhone"))
-        toDoItems.append(ToDoItem(textDescription: "darn holes in socks"))
-        toDoItems.append(ToDoItem(textDescription: "write this tutorial"))
-        toDoItems.append(ToDoItem(textDescription: "master Swift"))
-        toDoItems.append(ToDoItem(textDescription: "learn to draw"))
-        toDoItems.append(ToDoItem(textDescription: "get more exercise"))
-        toDoItems.append(ToDoItem(textDescription: "catch up with Mom"))
-        toDoItems.append(ToDoItem(textDescription: "get a hair cut"))
+        toDoItems.append(ToDoItem(textDescription: "↓ Pull down to add new todo item"))
+        toDoItems.append(ToDoItem(textDescription: "Tap to edit me"))
+        toDoItems.append(ToDoItem(textDescription: "← Swipe left to delete me"))
+        toDoItems.append(ToDoItem(textDescription: "→ Swipe right to mark me complete"))
+        toDoItems.append(ToDoItem(textDescription: "↑ Pinch me from my neighbor to add in place"))
+        toDoItems.append(ToDoItem(textDescription: "↓ Pinch me from my neighbor to add in place"))
+        toDoItems.append(ToDoItem(textDescription: "Long press and drag to move me"))
     }
     
     // MARK: - Tableview data source
