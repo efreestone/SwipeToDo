@@ -160,7 +160,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
                     //Notify delegate to delete item
                     delegate!.toDoItemDeleted(toDoItem!)
                 }
-                print("Delete on release = true")
+//                print("Delete on release = true")
             //Item being completed
             } else if completeOnDragRelease {
                 if toDoItem != nil {
@@ -170,11 +170,11 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
                 label.strikeThrough = true
                 itemCompleteLayer.hidden = false
                 UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
-                print("Complete on release = true")
+//                print("Complete on release = true")
             } else {
                 //Item not being deleted/completed, snap cell back into original location
                 UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
-                print("Delete on release = false")
+//                print("Delete on release = false")
             }
         }
     }

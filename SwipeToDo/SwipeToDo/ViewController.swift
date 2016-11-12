@@ -177,7 +177,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 delay += 0.035
                 
                 cellNum += 1
-                //print("Delay = \(delay) on cell \(cellNum)")
+//                print("Delay = \(delay) on cell \(cellNum)")
             }
             //Insure cell is todo item. Moved to be hit after first iteration to avoid jerky animation start
             if cell.toDoItem == toDoItem {
@@ -185,7 +185,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 //Hide cell to avoid ghosting over animated cells
                 cell.hidden = true
             }
-            //print("Delay = \(delay) on cell \(cellNum) after startAnimation")
+//            print("Delay = \(delay) on cell \(cellNum) after startAnimation")
         }
         
         //Use tableview animation to remove item
@@ -210,6 +210,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var pinchExceededRequiredDistance = false
     var pinchInProgress = false
     
+    //Handle pinch based on state
     func handlePinch(recognizer: UIPinchGestureRecognizer) {
         if recognizer.state == .Began {
             pinchStarted(recognizer)
@@ -224,8 +225,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
+    //Pinch started
     func pinchStarted(recognizer: UIPinchGestureRecognizer) {
-        print("Pinch started")
+//        print("Pinch started")
         //Get initial touch points, with top and bottom properly IDed
         initialTouchPoints = getNormalizedTouchPoints(recognizer)
         
@@ -238,12 +240,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             if viewContainsPoints(cell, point: initialTouchPoints.upper) {
                 upperCellIndex = i
                 //Highlight cell - FOR DEBUGGING
-                cell.backgroundColor = UIColor.purpleColor()
+//                cell.backgroundColor = UIColor.purpleColor()
             }
             if viewContainsPoints(cell, point: initialTouchPoints.lower) {
                 lowerCellIndex = i
                 //Highlight cell - FOR DEBUGGING
-                cell.backgroundColor = UIColor.purpleColor()
+//                cell.backgroundColor = UIColor.purpleColor()
             }
         }
         
@@ -261,7 +263,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func pinchChanged(recognizer: UIPinchGestureRecognizer) {
-        print("Pinch changed")
+//        print("Pinch changed")
         //Find current touch points
         let currentTouchPoints = getNormalizedTouchPoints(recognizer)
         
@@ -360,7 +362,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             //Insert placeholder cell at top
             tableView.insertSubview(placeHolderCell, atIndex: 0)
         } else {
-            print("Edit is in progress")
+//            print("Edit is in progress")
         }
     }
     
@@ -376,7 +378,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             placeHolderCell.alpha = min(1.0, -scrollViewContentOffsetY / tableView.rowHeight)
         } else {
             pullDownInProgress = false
-            //print("scrollViewDidScroll ELSE, trigger reload")
+//            print("scrollViewDidScroll ELSE, trigger reload")
             //pullDownInProgress = scrollViewContentOffsetY <= 0.0 ? true : false
         }
     }
@@ -387,7 +389,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         if pullDownInProgress && -scrollView.contentOffset.y > tableView.rowHeight {
             //Add new blank cell and trigger edit mode
             toDoItemAddedAtIndex(0)
-            print("add triggered")
+//            print("add triggered")
         }
         //Set pull bool to false and remove placeholder cell
         pullDownInProgress = false
