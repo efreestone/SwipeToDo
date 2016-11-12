@@ -81,10 +81,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // MARK: - TableViewCellDelegate (add, edit and delete items)
     
     //Add item, triggered from scrollViewDidEndDragging
-    func toDoItemAdded() {
+//    func toDoItemAdded() {
+//        toDoItemAddedAtIndex(0)
+//    }
+    
+    func toDoItemAddedAtIndex(index: Int) {
         //Create and add blank item
         let newToDoItem = ToDoItem(textDescription: "")
-        toDoItems.insert(newToDoItem, atIndex: 0)
+        toDoItems.insert(newToDoItem, atIndex: index)
         tableView.reloadData()
         //Enter edit mode to fill in item
         editInProgress = true
@@ -251,6 +255,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             placeHolderCell.frame = CGRectOffset(precedingCell.frame, 0.00, tableView.rowHeight / 2.0)
             placeHolderCell.backgroundColor = UIColor.redColor()
             tableView.insertSubview(placeHolderCell, atIndex: 0)
+            //Set placeholder cell color
+            placeHolderCell.backgroundColor = precedingCell.backgroundColor
         }
     }
     
@@ -262,7 +268,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //Check how much touch points have changed
         let upperDelta = currentTouchPoints.upper.y - initialTouchPoints.upper.y
         let lowerDelta = initialTouchPoints.lower.y - currentTouchPoints.lower.y
-        
         let delta = -min(0, min(upperDelta, lowerDelta))
         
         //Change offset for cells to part. Negative for cells above, positive for below
@@ -288,7 +293,34 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func pinchEnded(recognizer: UIPinchGestureRecognizer) {
+        pinchInProgress = false
         
+        //Remove placeholder cell
+        placeHolderCell.transform = CGAffineTransformIdentity
+        placeHolderCell.removeFromSuperview()
+        
+        //Check pinch distance
+        if pinchExceededRequiredDistance {
+            pinchExceededRequiredDistance = false
+            
+            //Set all cells back to transform identity, removing space from pinch
+            let visibleCells = self.tableView.visibleCells as! [TableViewCell]
+            for cell in visibleCells {
+                cell.transform = CGAffineTransformIdentity
+            }
+            
+            //Add new todo item at index
+            let indexOffset = Int(floor(tableView.contentOffset.y / tableView.rowHeight))
+            toDoItemAddedAtIndex(lowerCellIndex + indexOffset)
+        } else {
+            //Pinch not far enough, animate back
+            UIView.animateWithDuration(0.2, delay: 0.0, options: .CurveEaseInOut, animations: {() in
+                let visibleCells = self.tableView.visibleCells as! [TableViewCell]
+                for cell in visibleCells {
+                    cell.transform = CGAffineTransformIdentity
+                }
+            }, completion: nil)
+        }
     }
     
     //Get both touch points and insure top and bottom are properly identified, return TouchPoints
@@ -354,7 +386,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //Check if user dragged far enough to add cell
         if pullDownInProgress && -scrollView.contentOffset.y > tableView.rowHeight {
             //Add new blank cell and trigger edit mode
-            toDoItemAdded()
+            toDoItemAddedAtIndex(0)
             print("add triggered")
         }
         //Set pull bool to false and remove placeholder cell
