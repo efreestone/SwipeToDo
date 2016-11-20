@@ -11,11 +11,11 @@ import UIKit
 //Protocol TableViewCell uses to inform delegates of state change
 protocol TableViewCellDelegate {
     //Item has been deleted
-    func toDoItemDeleted(todoItem: ToDoItem)
+    func toDoItemDeleted(_ todoItem: ToDoItem)
     //Edit process has begun for cell
-    func cellDidBeginEditing(editingCell: TableViewCell)
+    func cellDidBeginEditing(_ editingCell: TableViewCell)
     //Edit process has ended for cell
-    func cellDidEndEditing(editingCell: TableViewCell)
+    func cellDidEndEditing(_ editingCell: TableViewCell)
 }
 
 class TableViewCell: UITableViewCell, UITextFieldDelegate {
@@ -38,7 +38,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         didSet {
             label.text = toDoItem!.textDescription
             label.strikeThrough = toDoItem!.isCompleted
-            itemCompleteLayer.hidden = !label.strikeThrough
+            itemCompleteLayer.isHidden = !label.strikeThrough
         }
     }
     
@@ -49,56 +49,56 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         //Initialize strikethrough layer
         label = StrikeThroughText(frame: CGRect.null)
-        label.textColor = UIColor.whiteColor()
-        label.font = UIFont.boldSystemFontOfSize(18)
-        label.backgroundColor = UIColor.clearColor()
+        label.textColor = UIColor.white
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.backgroundColor = UIColor.clear
         
         //Utility method for creating contextual cues
         func createCueLabel() -> UILabel {
             let label = UILabel(frame: CGRect.null)
-            label.textColor = UIColor.whiteColor()
-            label.font = UIFont.boldSystemFontOfSize(32.0)
-            label.backgroundColor = UIColor.clearColor()
+            label.textColor = UIColor.white
+            label.font = UIFont.boldSystemFont(ofSize: 32.0)
+            label.backgroundColor = UIColor.clear
             return label
         }
         
         //Cross and tick labels for contextual cues, using unicode symbols
         crossLabel = createCueLabel()
         crossLabel.text = "\u{2717}"
-        crossLabel.textAlignment = .Left
+        crossLabel.textAlignment = .left
         tickLabel = createCueLabel()
         tickLabel.text = "\u{2713}"
-        tickLabel.textAlignment = .Right
+        tickLabel.textAlignment = .right
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         //Set label delegate. This is used to dismiss keyboard on edit.
         label.delegate = self
-        label.contentVerticalAlignment = .Center
+        label.contentVerticalAlignment = .center
         
         //Add strikethrough and cue layers without default blue highlight
         addSubview(label)
         addSubview(crossLabel)
         addSubview(tickLabel)
-        selectionStyle = .None
+        selectionStyle = .none
         
         //Add gradient layer for each cell
         gradientLayer.frame = bounds
-        let color1 = UIColor(white: 1.0, alpha: 0.2).CGColor as CGColorRef
-        let color2 = UIColor(white: 0.9, alpha: 0.1).CGColor as CGColorRef
-        let color3 = UIColor.clearColor().CGColor as CGColorRef
-        let color4 = UIColor(white: 0.0, alpha: 0.1).CGColor as CGColorRef
+        let color1 = UIColor(white: 1.0, alpha: 0.2).cgColor as CGColor
+        let color2 = UIColor(white: 0.9, alpha: 0.1).cgColor as CGColor
+        let color3 = UIColor.clear.cgColor as CGColor
+        let color4 = UIColor(white: 0.0, alpha: 0.1).cgColor as CGColor
     /* Removing colors 2 & 3 makes a more stock looking gradient.
     jThis will need tweaked in either case in the future */
         gradientLayer.colors = [color1, color2, color3, color4]
         gradientLayer.locations = [0.0, 0.01, 0.95, 1.0]
-        layer.insertSublayer(gradientLayer, atIndex: 0)
+        layer.insertSublayer(gradientLayer, at: 0)
         
         //Add green layer for completed items, and hide
         itemCompleteLayer = CALayer(layer: layer)
-        itemCompleteLayer.backgroundColor = myGreenColor.CGColor
-        itemCompleteLayer.hidden = true
-        layer.insertSublayer(itemCompleteLayer, atIndex: 0)
+        itemCompleteLayer.backgroundColor = myGreenColor.cgColor
+        itemCompleteLayer.isHidden = true
+        layer.insertSublayer(itemCompleteLayer, at: 0)
         
         //Add pan gesture to cell
         let recognizer = UIPanGestureRecognizer(target: self, action: #selector(TableViewCell.handlePan(_:)))
@@ -123,17 +123,17 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     // MARK: - Horizontal pan gesture
-    func handlePan(recognizer: UIPanGestureRecognizer) {
+    func handlePan(_ recognizer: UIPanGestureRecognizer) {
         //Gesture began
-        if recognizer.state == .Began {
+        if recognizer.state == .began {
             //Record center
             originalCenter = center
         }
         
         //Gesture continues
-        if recognizer.state == .Changed {
-            let translation = recognizer.translationInView(self)
-            center = CGPointMake(originalCenter.x + translation.x, originalCenter.y)
+        if recognizer.state == .changed {
+            let translation = recognizer.translation(in: self)
+            center = CGPoint(x: originalCenter.x + translation.x, y: originalCenter.y)
             //Check if drag length far enough left to delete
             deleteOnDragRelease = frame.origin.x < -frame.size.width / 2.0
             //Or far enough right to complete
@@ -144,12 +144,12 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
             crossLabel.alpha = cueAlpha
             tickLabel.alpha = cueAlpha
             //Change cue colors to indicate cell has been pulled far enough
-            crossLabel.textColor = deleteOnDragRelease ? UIColor.redColor() : UIColor.whiteColor()
-            tickLabel.textColor = completeOnDragRelease ? myGreenColor : UIColor.whiteColor()
+            crossLabel.textColor = deleteOnDragRelease ? UIColor.red : UIColor.white
+            tickLabel.textColor = completeOnDragRelease ? myGreenColor : UIColor.white
         }
         
         //Gesture has ended
-        if recognizer.state == .Ended {
+        if recognizer.state == .ended {
             //Get original frame
             let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
             
@@ -168,12 +168,12 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
                 }
                 //Set item as complete and unhide strikethrough
                 label.strikeThrough = true
-                itemCompleteLayer.hidden = false
-                UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
+                itemCompleteLayer.isHidden = false
+                UIView.animate(withDuration: 0.2, animations: {self.frame = originalFrame})
 //                print("Complete on release = true")
             } else {
                 //Item not being deleted/completed, snap cell back into original location
-                UIView.animateWithDuration(0.2, animations: {self.frame = originalFrame})
+                UIView.animate(withDuration: 0.2, animations: {self.frame = originalFrame})
 //                print("Delete on release = false")
             }
         }
@@ -181,9 +181,9 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     
     
     //Cancel gesture if vertical (scrolling)
-    override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
-            let translation = panGestureRecognizer.translationInView(superview!)
+            let translation = panGestureRecognizer.translation(in: superview!)
             if fabs(translation.x) > fabs(translation.y) {
                 return true
             }
@@ -195,13 +195,13 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     // MARK: - UITextFieldDelegate methods
     
     //Close keyboard on enter
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return false
     }
     
     //Disable edit of completed items
-    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         if toDoItem != nil {
             return !toDoItem!.isCompleted
         }
@@ -209,14 +209,14 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     //Call delegate cell did begin editing method
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         if delegate != nil {
             delegate!.cellDidBeginEditing(self)
         }
     }
     
     //Set text once edit has ended
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         if toDoItem != nil {
             toDoItem!.textDescription = textField.text!
         }

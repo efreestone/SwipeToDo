@@ -25,11 +25,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //Set tableview data source and delegate
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(TableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: "cell")
         
         //Set tableview style
-        tableView.separatorStyle = .None
-        tableView.backgroundColor = UIColor.blackColor()
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = UIColor.black
         tableView.rowHeight = 50.0
         
         //Check if toDoItem exists, return if it does
@@ -42,29 +42,29 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         toDoItems.append(ToDoItem(textDescription: "Tap to edit me"))
         toDoItems.append(ToDoItem(textDescription: "← Swipe left to delete me"))
         toDoItems.append(ToDoItem(textDescription: "→ Swipe right to mark me complete"))
-        toDoItems.append(ToDoItem(textDescription: "↑ Pinch me from my neighbor to add in place"))
-        toDoItems.append(ToDoItem(textDescription: "↓ Pinch me from my neighbor to add in place"))
+        toDoItems.append(ToDoItem(textDescription: "↑ Pinch me from my neighbor to add"))
+        toDoItems.append(ToDoItem(textDescription: "↓ Pinch me from my neighbor to add"))
         toDoItems.append(ToDoItem(textDescription: "Long press and drag to move me"))
     }
     
     // MARK: - Tableview data source
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return toDoItems.count
     }
     
     //Cell for row at index path
-    func tableView(tableView: UITableView,
-        cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
-            cell.selectionStyle = .None
+    func tableView(_ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+            cell.selectionStyle = .none
             //Set background to clear
             //cell.textLabel?.backgroundColor = UIColor.clearColor()
-            let item = toDoItems[indexPath.row]
+            let item = toDoItems[(indexPath as NSIndexPath).row]
             //Cell text is set in didSet on TableViewCell
             //cell.textLabel?.text = item.textDescription
         
@@ -80,10 +80,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 //        toDoItemAddedAtIndex(0)
 //    }
     
-    func toDoItemAddedAtIndex(index: Int) {
+    func toDoItemAddedAtIndex(_ index: Int) {
         //Create and add blank item
         let newToDoItem = ToDoItem(textDescription: "")
-        toDoItems.insert(newToDoItem, atIndex: index)
+        toDoItems.insert(newToDoItem, at: index)
         tableView.reloadData()
         //Enter edit mode to fill in item
         editInProgress = true
@@ -99,13 +99,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     //Edit started, animate cell to top with animation and lower alpha of all other cells
-    func cellDidBeginEditing(editingCell: TableViewCell) {
+    func cellDidBeginEditing(_ editingCell: TableViewCell) {
         editInProgress = true
         let editingOffset = tableView.contentOffset.y - editingCell.frame.origin.y as CGFloat
         let visibleCells = tableView.visibleCells as! [TableViewCell]
         for cell in visibleCells {
-            UIView.animateWithDuration(0.3, animations: {() in
-                cell.transform = CGAffineTransformMakeTranslation(0, editingOffset)
+            UIView.animate(withDuration: 0.3, animations: {() in
+                cell.transform = CGAffineTransform(translationX: 0, y: editingOffset)
                 //Change alpha for all cells that are not the actual cell being edited using Identity Operator.
                 //Multiple instances of editingCell could potentially exist
                 if cell !== editingCell {
@@ -117,11 +117,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     //Edit ended, animate cells back into place and return alpha of other cells to normal
-    func cellDidEndEditing(editingCell: TableViewCell) {
+    func cellDidEndEditing(_ editingCell: TableViewCell) {
         let visibleCells = tableView.visibleCells as! [TableViewCell]
         for cell: TableViewCell in visibleCells {
-            UIView.animateWithDuration(0.5, animations: {() in
-                cell.transform = CGAffineTransformIdentity
+            UIView.animate(withDuration: 0.5, animations: {() in
+                cell.transform = CGAffineTransform.identity
                 if cell !== editingCell {
                     //Return non-edited cell alphas back to 1
                     cell.alpha = 1.0
@@ -137,15 +137,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     //Delete item
-    func toDoItemDeleted(toDoItem: ToDoItem) {
-        let index = (toDoItems as NSArray).indexOfObject(toDoItem)
+    func toDoItemDeleted(_ toDoItem: ToDoItem) {
+        let index = (toDoItems as NSArray).index(of: toDoItem)
         
         if index == NSNotFound {
             return
         }
         
         //Remove item
-        toDoItems.removeAtIndex(index)
+        toDoItems.remove(at: index)
         
         //Loop through visible cells to animate delete
         let visibleCells = tableView.visibleCells as! [TableViewCell]
@@ -156,10 +156,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         for i in 0..<visibleCells.count {
             let cell = visibleCells[i]
             if startAnimating {
-                UIView.animateWithDuration(0.3, delay: delay, options: .CurveEaseInOut,
+                UIView.animate(withDuration: 0.3, delay: delay, options: UIViewAnimationOptions(),
                     animations: {() in
                         //Slide individual cell up
-                        cell.frame = CGRectOffset(cell.frame, 0.0, -cell.frame.size.height)
+                        cell.frame = cell.frame.offsetBy(dx: 0.0, dy: -cell.frame.size.height)
                     },
                     completion: {(finished: Bool) in
                         if (cell == lastView) {
@@ -178,15 +178,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             if cell.toDoItem == toDoItem {
                 startAnimating = true
                 //Hide cell to avoid ghosting over animated cells
-                cell.hidden = true
+                cell.isHidden = true
             }
 //            print("Delay = \(delay) on cell \(cellNum) after startAnimation")
         }
         
         //Use tableview animation to remove item
         tableView.beginUpdates()
-        let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
-        tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
+        let indexPathForRow = IndexPath(row: index, section: 0)
+        tableView.deleteRows(at: [indexPathForRow], with: .fade)
         tableView.endUpdates()
     }
     
@@ -206,22 +206,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var pinchInProgress = false
     
     //Handle pinch based on state
-    func handlePinch(recognizer: UIPinchGestureRecognizer) {
-        if recognizer.state == .Began {
+    func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
+        if recognizer.state == .began {
             pinchStarted(recognizer)
         }
         
-        if recognizer.state == .Changed && pinchInProgress && recognizer.numberOfTouches() == 2 {
+        if recognizer.state == .changed && pinchInProgress && recognizer.numberOfTouches == 2 {
             pinchChanged(recognizer)
         }
         
-        if recognizer.state == .Ended {
+        if recognizer.state == .ended {
             pinchEnded(recognizer)
         }
     }
     
     //Pinch started
-    func pinchStarted(recognizer: UIPinchGestureRecognizer) {
+    func pinchStarted(_ recognizer: UIPinchGestureRecognizer) {
 //        print("Pinch started")
         //Get initial touch points, with top and bottom properly IDed
         initialTouchPoints = getNormalizedTouchPoints(recognizer)
@@ -249,15 +249,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             //Initiate pinch and add placeholder cell
             pinchInProgress = true
             let precedingCell = visibleCells[upperCellIndex]
-            placeHolderCell.frame = CGRectOffset(precedingCell.frame, 0.00, tableView.rowHeight / 2.0)
-            placeHolderCell.backgroundColor = UIColor.redColor()
-            tableView.insertSubview(placeHolderCell, atIndex: 0)
+            placeHolderCell.frame = precedingCell.frame.offsetBy(dx: 0.00, dy: tableView.rowHeight / 2.0)
+            placeHolderCell.backgroundColor = UIColor.red
+            tableView.insertSubview(placeHolderCell, at: 0)
             //Set placeholder cell color
             placeHolderCell.backgroundColor = precedingCell.backgroundColor
         }
     }
     
-    func pinchChanged(recognizer: UIPinchGestureRecognizer) {
+    func pinchChanged(_ recognizer: UIPinchGestureRecognizer) {
 //        print("Pinch changed")
         //Find current touch points
         let currentTouchPoints = getNormalizedTouchPoints(recognizer)
@@ -272,16 +272,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         for i in 0..<visibleCells.count {
             let cell = visibleCells[i]
             if i <= upperCellIndex {
-                cell.transform = CGAffineTransformMakeTranslation(0, -delta)
+                cell.transform = CGAffineTransform(translationX: 0, y: -delta)
             }
             if i >= lowerCellIndex {
-                cell.transform = CGAffineTransformMakeTranslation(0, delta)
+                cell.transform = CGAffineTransform(translationX: 0, y: delta)
             }
         }
         //Scale placeholder to provide a "spring out" effect
         let gapSize = delta * 2
         let cappedGapSize = min(gapSize, tableView.rowHeight)
-        placeHolderCell.transform = CGAffineTransformMakeScale(1.0, cappedGapSize / tableView.rowHeight)
+        placeHolderCell.transform = CGAffineTransform(scaleX: 1.0, y: cappedGapSize / tableView.rowHeight)
         placeHolderCell.label.text = gapSize > tableView.rowHeight ? "Release to add item" : "Pull apart to add item"
         placeHolderCell.alpha = min(1.0, gapSize / tableView.rowHeight)
         
@@ -289,11 +289,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         pinchExceededRequiredDistance = gapSize > tableView.rowHeight
     }
     
-    func pinchEnded(recognizer: UIPinchGestureRecognizer) {
+    func pinchEnded(_ recognizer: UIPinchGestureRecognizer) {
         pinchInProgress = false
         
         //Remove placeholder cell
-        placeHolderCell.transform = CGAffineTransformIdentity
+        placeHolderCell.transform = CGAffineTransform.identity
         placeHolderCell.removeFromSuperview()
         
         //Check pinch distance
@@ -303,7 +303,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             //Set all cells back to transform identity, removing space from pinch
             let visibleCells = self.tableView.visibleCells as! [TableViewCell]
             for cell in visibleCells {
-                cell.transform = CGAffineTransformIdentity
+                cell.transform = CGAffineTransform.identity
             }
             
             //Add new todo item at index
@@ -311,19 +311,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             toDoItemAddedAtIndex(lowerCellIndex + indexOffset)
         } else {
             //Pinch not far enough, animate back
-            UIView.animateWithDuration(0.2, delay: 0.0, options: .CurveEaseInOut, animations: {() in
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: UIViewAnimationOptions(), animations: {() in
                 let visibleCells = self.tableView.visibleCells as! [TableViewCell]
                 for cell in visibleCells {
-                    cell.transform = CGAffineTransformIdentity
+                    cell.transform = CGAffineTransform.identity
                 }
             }, completion: nil)
         }
     }
     
     //Get both touch points and insure top and bottom are properly identified, return TouchPoints
-    func getNormalizedTouchPoints(recognizer: UIPinchGestureRecognizer) -> TouchPoints {
-        var pointOne = recognizer.locationOfTouch(0, inView: tableView)
-        var pointTwo = recognizer.locationOfTouch(1, inView: tableView)
+    func getNormalizedTouchPoints(_ recognizer: UIPinchGestureRecognizer) -> TouchPoints {
+        var pointOne = recognizer.location(ofTouch: 0, in: tableView)
+        var pointTwo = recognizer.location(ofTouch: 1, in: tableView)
         //Check that pointOne is top-most touch, swap if not
         if pointOne.y > pointTwo.y {
             let tempPoint = pointOne
@@ -335,7 +335,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     //Make sure point actually exists in the view. Cells are full width, so only checking y axis
-    func viewContainsPoints(view: UIView, point: CGPoint) -> Bool {
+    func viewContainsPoints(_ view: UIView, point: CGPoint) -> Bool {
         let frame = view.frame
         return (frame.origin.y < point.y) && (frame.origin.y + (frame.size.height) > point.y)
     }
@@ -343,26 +343,26 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // MARK: - UIScrollViewDelegate
     
     //Create placeholder for cell being added
-    let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+    let placeHolderCell = TableViewCell(style: .default, reuseIdentifier: "cell")
     //Create bools for pulldown ad edit in progress
     var pullDownInProgress = false
     var editInProgress = false
     
     //Scroll or drag beigns. Check location and start insert process if pulling from top
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         //Set bool true if drag in progress is starting from top of list
         pullDownInProgress = scrollView.contentOffset.y <= 0.0
-        placeHolderCell.backgroundColor = UIColor.redColor()
+        placeHolderCell.backgroundColor = UIColor.red
         if pullDownInProgress && !editInProgress {
             //Insert placeholder cell at top
-            tableView.insertSubview(placeHolderCell, atIndex: 0)
+            tableView.insertSubview(placeHolderCell, at: 0)
         } else {
 //            print("Edit is in progress")
         }
     }
     
     //Scroll took place. Add placeholder cell if from top
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let scrollViewContentOffsetY = scrollView.contentOffset.y
         
         if (pullDownInProgress && !editInProgress) && scrollViewContentOffsetY <= 0.0 {
@@ -379,7 +379,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     //Scroll or drag ended. Check distance and add new item if far enough
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         //Check if user dragged far enough to add cell
         if pullDownInProgress && -scrollView.contentOffset.y > tableView.rowHeight {
             //Add new blank cell and trigger edit mode
@@ -393,14 +393,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     // MARK: - TableViewDelegate
     
-    func colorForIndex(index: Int) -> UIColor {
+    func colorForIndex(_ index: Int) -> UIColor {
         let itemCount = toDoItems.count - 1
         let val = (CGFloat(index) / CGFloat(itemCount)) * 0.6
         return UIColor(red: 1.0, green: val, blue: 0.0, alpha: 1.0)
     }
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        cell.backgroundColor = colorForIndex(indexPath.row)
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = colorForIndex((indexPath as NSIndexPath).row)
     }
     
 }
