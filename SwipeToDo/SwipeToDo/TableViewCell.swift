@@ -8,7 +8,7 @@
 
 import UIKit
 
-//Protocol TableViewCell uses to inform delegates of state change
+//Protocol TableViewCell used to inform delegates of state change (delete, edit, etc)
 protocol TableViewCellDelegate {
     //Item has been deleted
     func toDoItemDeleted(_ todoItem: ToDoItem)
