@@ -81,6 +81,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 //    }
     
     func toDoItemAddedAtIndex(_ index: Int) {
+        print("todo item added at index \(index)")
         //Create and add blank item
         let newToDoItem = ToDoItem(textDescription: "")
         toDoItems.insert(newToDoItem, at: index)
@@ -258,7 +259,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func pinchChanged(_ recognizer: UIPinchGestureRecognizer) {
-//        print("Pinch changed")
+        print("Pinch changed")
         //Find current touch points
         let currentTouchPoints = getNormalizedTouchPoints(recognizer)
         
@@ -291,7 +292,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func pinchEnded(_ recognizer: UIPinchGestureRecognizer) {
         pinchInProgress = false
-        
+        print("Pinch ended")
         //Remove placeholder cell
         placeHolderCell.transform = CGAffineTransform.identity
         placeHolderCell.removeFromSuperview()
@@ -299,17 +300,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //Check pinch distance
         if pinchExceededRequiredDistance {
             pinchExceededRequiredDistance = false
+            print("Pinch far enough")
             
             //Set all cells back to transform identity, removing space from pinch
             let visibleCells = self.tableView.visibleCells as! [TableViewCell]
             for cell in visibleCells {
                 cell.transform = CGAffineTransform.identity
+                print("CGAffineTransform")
             }
             
             //Add new todo item at index
             let indexOffset = Int(floor(tableView.contentOffset.y / tableView.rowHeight))
             toDoItemAddedAtIndex(lowerCellIndex + indexOffset)
         } else {
+            print("Pinch NOT far enough")
             //Pinch not far enough, animate back
             UIView.animate(withDuration: 0.2, delay: 0.0, options: UIViewAnimationOptions(), animations: {() in
                 let visibleCells = self.tableView.visibleCells as! [TableViewCell]
@@ -322,6 +326,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     //Get both touch points and insure top and bottom are properly identified, return TouchPoints
     func getNormalizedTouchPoints(_ recognizer: UIPinchGestureRecognizer) -> TouchPoints {
+        print("Normalized touch points")
         var pointOne = recognizer.location(ofTouch: 0, in: tableView)
         var pointTwo = recognizer.location(ofTouch: 1, in: tableView)
         //Check that pointOne is top-most touch, swap if not
