@@ -94,6 +94,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             if (cell.toDoItem === newToDoItem) {
                 newEditCell = cell
                 newEditCell.label.becomeFirstResponder()
+                print("First Responder")
                 break
             }
         }
