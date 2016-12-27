@@ -83,7 +83,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func toDoItemAddedAtIndex(_ index: Int) {
         print("todo item added at index \(index)")
         //Create and add blank item
-        let newToDoItem = ToDoItem(textDescription: "")
+        let newToDoItem = ToDoItem(textDescription: "", isCompleted: false, isImportant: false)
         toDoItems.insert(newToDoItem, at: index)
         tableView.reloadData()
         //Enter edit mode to fill in item

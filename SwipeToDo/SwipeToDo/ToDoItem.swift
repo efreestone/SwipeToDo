@@ -12,11 +12,13 @@ class ToDoItem: NSObject {
     //Create initial vars
     var textDescription: String
     var isCompleted: Bool
+    var isImportant: Bool
     
     //Initialize ToDoItem and set default values
-    init(textDescription: String) {
+    init(textDescription: String, isCompleted: Bool = false, isImportant: Bool = false) {
         self.textDescription = textDescription
-        self.isCompleted = false
+        self.isCompleted = isCompleted
+        self.isImportant = isImportant
         
     }
 
