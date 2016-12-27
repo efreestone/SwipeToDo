@@ -37,8 +37,8 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     var toDoItem: ToDoItem? {
         didSet {
             label.text = toDoItem!.textDescription
-            label.strikeThrough = toDoItem!.isCompleted
-            itemCompleteLayer.isHidden = !label.strikeThrough
+            label.shouldStrikeThrough = toDoItem!.isCompleted
+            itemCompleteLayer.isHidden = !label.shouldStrikeThrough
         }
     }
     
@@ -167,7 +167,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
                     toDoItem!.isCompleted = true
                 }
                 //Set item as complete and unhide strikethrough
-                label.strikeThrough = true
+                label.shouldStrikeThrough = true
                 itemCompleteLayer.isHidden = false
                 UIView.animate(withDuration: 0.2, animations: {self.frame = originalFrame})
 //                print("Complete on release = true")

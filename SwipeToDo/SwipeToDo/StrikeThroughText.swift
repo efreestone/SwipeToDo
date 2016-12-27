@@ -14,10 +14,10 @@ class StrikeThroughText: UITextField {
     let strikeThroughLayer: CALayer
     
     //Hide or show strikethrough layer
-    var strikeThrough : Bool {
+    var shouldStrikeThrough : Bool {
         didSet {
-            strikeThroughLayer.isHidden = !strikeThrough
-            if strikeThrough {
+            strikeThroughLayer.isHidden = !shouldStrikeThrough
+            if shouldStrikeThrough {
                 resizeStrikeThrough()
             }
         }
@@ -32,7 +32,7 @@ class StrikeThroughText: UITextField {
         strikeThroughLayer = CALayer()
         strikeThroughLayer.backgroundColor = UIColor.white.cgColor
         strikeThroughLayer.isHidden = true
-        strikeThrough = false
+        shouldStrikeThrough = false
         
         super.init(frame: frame)
         //Add striketrough layer
