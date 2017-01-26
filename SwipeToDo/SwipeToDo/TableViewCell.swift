@@ -52,6 +52,8 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         label.textColor = UIColor.white
         label.font = UIFont.boldSystemFont(ofSize: 18)
         label.backgroundColor = UIColor.clear
+        //label.isUserInteractionEnabled = false
+        //label.isEnabled = false
         
         //Utility method for creating contextual cues
         func createCueLabel() -> UILabel {
@@ -101,9 +103,13 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         layer.insertSublayer(itemCompleteLayer, at: 0)
         
         //Add pan gesture to cell
-        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(TableViewCell.handlePan(_:)))
-        recognizer.delegate = self
-        addGestureRecognizer(recognizer)
+        let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TableViewCell.handlePan(_:)))
+        panRecognizer.delegate = self
+        addGestureRecognizer(panRecognizer)
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(TableViewCell.handleLongPress(_:)))
+        longPressRecognizer.minimumPressDuration = 0.25
+        longPressRecognizer.delegate = self
+        label.addGestureRecognizer(longPressRecognizer)
     }
     
     //Define lets for margins and context cues
@@ -192,6 +198,55 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
         return false
     }
     
+    // MARK: - Long Press Gesture
+    
+    func handleLongPress(_ recognizer: UILongPressGestureRecognizer) {
+        print("handleLongPress")
+        
+        //let longPress = recognizer
+//        let state = recognizer.state
+//        var longPressLocation = recognizer.location(in: tableView)
+//        var indexPath = tableView.indexPathForRow(at: longPressLocation)
+        
+        //        let visibleCells = tableView.visibleCells as! [TableViewCell]
+        //        for i in 0..<visibleCells.count {
+        //            let cell = visibleCells[i]
+        //            print("cell = \(cell)")
+        //        }
+        
+        struct My {
+            static var cellSnapshot: UIView? = nil
+        }
+        struct Path {
+            static var initialIndexPath: NSIndexPath? = nil
+        }
+        
+        if recognizer.state == .began {
+            //let touchPoint = recognizer.location(in: self.view)
+//            if let index = indexPath {
+//                print("Index = \(index.row)")
+//                
+//            }
+            //pinchStarted(recognizer)
+            //            if indexPath != nil {
+            //                print("Long Press Index Path = \(indexPath)")
+            //                Path.initialIndexPath = indexPath as NSIndexPath?
+            //                let cell = tableView.cellForRow(at: indexPath!)
+            //            }
+            print("Long Press BEGAN")
+        }
+        
+        if recognizer.state == .changed { //&& pinchInProgress && recognizer.numberOfTouches == 2
+            //pinchChanged(recognizer)
+            print("Long Press CHANGED")
+        }
+        
+        if recognizer.state == .ended {
+            //pinchEnded(recognizer)
+            print("Long Press ENDED")
+        }
+    }
+    
     // MARK: - UITextFieldDelegate methods
     
     //Close keyboard on enter
@@ -212,6 +267,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if delegate != nil {
             delegate!.cellDidBeginEditing(self)
+            print("textFieldDidBeginEditing")
         }
     }
     

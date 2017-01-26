@@ -13,14 +13,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     var toDoItems = [ToDoItem]()
     let pinchRecognizer = UIPinchGestureRecognizer()
+    let longPressRecognizer = UILongPressGestureRecognizer()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        //Set pinch gesture recognizer and add to tableview
+        //Set gesture recognizers and add to tableview
         pinchRecognizer.addTarget(self, action: #selector(ViewController.handlePinch(_:)))
         tableView.addGestureRecognizer(pinchRecognizer)
+//        longPressRecognizer.addTarget(self, action: #selector(ViewController.handleLongPress(_:)))
+//        longPressRecognizer.minimumPressDuration = 1.0
+//        longPressRecognizer.delegate = self
+//        tableView.addGestureRecognizer(longPressRecognizer)
         
         //Set tableview data source and delegate
         tableView.dataSource = self
@@ -58,8 +63,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     //Cell for row at index path
-    func tableView(_ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
             cell.selectionStyle = .none
             //Set background to clear
@@ -102,6 +106,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     //Edit started, animate cell to top with animation and lower alpha of all other cells
     func cellDidBeginEditing(_ editingCell: TableViewCell) {
+        print("cellDidBeginEditing")
         editInProgress = true
         let editingOffset = tableView.contentOffset.y - editingCell.frame.origin.y as CGFloat
         let visibleCells = tableView.visibleCells as! [TableViewCell]
@@ -345,6 +350,55 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let frame = view.frame
         return (frame.origin.y < point.y) && (frame.origin.y + (frame.size.height) > point.y)
     }
+    
+    // MARK: - Long Press Gesture 
+    
+//    func handleLongPress(_ recognizer: UILongPressGestureRecognizer) {
+//        print("handleLongPress")
+//        
+//        //let longPress = recognizer
+//        let state = recognizer.state
+//        var longPressLocation = recognizer.location(in: tableView)
+//        var indexPath = tableView.indexPathForRow(at: longPressLocation)
+//        
+////        let visibleCells = tableView.visibleCells as! [TableViewCell]
+////        for i in 0..<visibleCells.count {
+////            let cell = visibleCells[i]
+////            print("cell = \(cell)")
+////        }
+//        
+//        struct My {
+//            static var cellSnapshot: UIView? = nil
+//        }
+//        struct Path {
+//            static var initialIndexPath: NSIndexPath? = nil
+//        }
+//        
+//        if recognizer.state == .began {
+//            let touchPoint = recognizer.location(in: self.view)
+//            if let index = indexPath {
+//                print("Index = \(index.row)")
+//                
+//            }
+//            //pinchStarted(recognizer)
+////            if indexPath != nil {
+////                print("Long Press Index Path = \(indexPath)")
+////                Path.initialIndexPath = indexPath as NSIndexPath?
+////                let cell = tableView.cellForRow(at: indexPath!)
+////            }
+//            print("Long Press BEGAN")
+//        }
+//        
+//        if recognizer.state == .changed { //&& pinchInProgress && recognizer.numberOfTouches == 2
+//            //pinchChanged(recognizer)
+//            print("Long Press CHANGED")
+//        }
+//        
+//        if recognizer.state == .ended {
+//            //pinchEnded(recognizer)
+//            print("Long Press ENDED")
+//        }
+//    }
     
     // MARK: - UIScrollViewDelegate
     
